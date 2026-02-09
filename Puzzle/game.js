@@ -105,6 +105,7 @@ PS.touch = function( x, y, data, options ) {
 		PS.glyphColor(2, 2, PS.COLOR_BLACK);
 		PS.glyph(3, 2, 78);
 		PS.glyphColor(3, 2, PS.COLOR_BLACK);
+		PS.audioPlay("fx_coin6");
 	}
 
 };
