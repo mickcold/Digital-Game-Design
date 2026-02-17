@@ -59,6 +59,7 @@ PS.touch = function( x, y, data, options ) {
 		else {
 			PS.color(x, y, PS.COLOR_WHITE);
 			PS.audioPlay(PS.xylophone(20));
+			hash[x][y] = 0;
 			score++;
 			PS.statusText("Score: " + score);
 			randomSquare();
