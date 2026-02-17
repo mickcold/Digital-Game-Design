@@ -1,15 +1,28 @@
 "use strict"; // Do NOT remove this directive!
 
+let score = 0;
+let hash = [[0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 0, 0, 0, 0, 0, 0, 0]
+];
+
 function randomSquare() {
-	let a = PS.random(8);
-	let b = PS.random(8);
-	PS.color(a - 1, b - 1, PS.COLOR_RED);
+	let a = PS.random(8) - 1;
+	let b = PS.random(8) - 1;
+	hash[a][b] = 1;
+	PS.color(a, b, PS.COLOR_RED);
+	//const timer = setTimeout(() => {whiteOut(a - 1, b - 1);}, 3000)
 }
 
 PS.init = function( system, options ) {
 	PS.gridSize( 8, 8 );
 	randomSquare();
-
+	
 	// This is also a good place to display
 	// your game title or a welcome message
 	// in the status line above the grid.
@@ -38,9 +51,29 @@ PS.touch = function( x, y, data, options ) {
 	// to inspect x/y parameters:
 
 	// PS.debug( "PS.touch() @ " + x + ", " + y + "\n" );
-	PS.color(x, y, PS.COLOR_WHITE);
-	PS.audioPlay(PS.xylophone(20));
-	randomSquare();
+	//if (x == a && y == b) {
+		if(hash[x][y] == 0) {
+			score--;
+			PS.statusText("Score: " + score);
+		}
+		else {
+			PS.color(x, y, PS.COLOR_WHITE);
+			PS.audioPlay(PS.xylophone(20));
+			score++;
+			PS.statusText("Score: " + score);
+			randomSquare();
+		}
+
+		//add score increase
+		//figure out how to determine color of the bead
+
+	//}
+	/*
+	else {
+		PS.audioPlay("fx_rip");
+	}
+	*/
+	
 	// Add code here for mouse clicks/touches
 	// over a bead.
 };
