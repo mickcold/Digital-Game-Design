@@ -22,6 +22,7 @@ function randomSquare() {
 PS.init = function( system, options ) {
 	PS.gridSize( 8, 8 );
 	randomSquare();
+	PS.grid.color(PS.COLOR_WHITE);
 	
 	// This is also a good place to display
 	// your game title or a welcome message
