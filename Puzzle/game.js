@@ -7,17 +7,6 @@ let goal2 = 0;
 let but3 = 0;
 let goal3 = 0;
 
-function which(num) {
-	if(num == 1) {
-		return PS.COLOR_RED;
-	}
-	else if(num == 2) {
-		return PS.COLOR_GREEN;
-	}
-	else {
-		return PS.COLOR_BLUE;
-	}
-}
 
 function setComb(x, y, total) {
 	let numA = PS.random(total);
