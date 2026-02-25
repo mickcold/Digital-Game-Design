@@ -25,8 +25,8 @@ function setComb(x, y, total) {
 
 	let colA = PS.random(3);
 	PS.color(x, y, which(colA));
-	PS.glyph(x, y-1, numA + 48);
-	PS.glyphColor(x, y-1, PS.COLOR_BLACK);
+	PS.glyph(x, y, numA + 48);
+	PS.glyphColor(x, y, PS.COLOR_BLACK);
 	return numA;
 }
 
@@ -51,6 +51,7 @@ function reset() {
 
 PS.init = function( system, options ) {
 	PS.gridSize(5, 4);
+	PS.gridColor(PS.COLOR_WHITE);
 	setGame();
 	resetButton();
 
