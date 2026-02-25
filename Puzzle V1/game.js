@@ -23,9 +23,10 @@ function setComb(x, y, total) {
 	let numA = PS.random(total);
 	PS.debug("NumA = " + numA);
 
-	PS.color(x, y, PS.COLOR_RED);
-	PS.glyph(x, y, numA + 48);
-	PS.glyphColor(x, y, PS.COLOR_BLACK);
+	let colA = PS.random(3);
+	PS.color(x, y, which(colA));
+	PS.glyph(x, y-1, numA + 48);
+	PS.glyphColor(x, y-1, PS.COLOR_BLACK);
 	return numA;
 }
 
@@ -50,7 +51,6 @@ function reset() {
 
 PS.init = function( system, options ) {
 	PS.gridSize(5, 4);
-	PS.borderColor(PS.ALL, PS.ALL, PS.COLOR_WHITE);
 	setGame();
 	resetButton();
 
@@ -93,6 +93,9 @@ PS.touch = function( x, y, data, options ) {
 	}
 	else if (x==0 && y==0) {
 		reset();
+	}
+	else {
+		PS.audioPlay("fx_rip");
 	}
 
 	if(but1 == goal1 && but2 == goal2 && but3 == goal3) {
