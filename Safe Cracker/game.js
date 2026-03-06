@@ -1,47 +1,219 @@
 "use strict"; // Do NOT remove this directive!
 
-let but1 = 0;
-let goal1 = 0;
-let but2 = 0;
-let goal2 = 0;
-let but3 = 0;
-let goal3 = 0;
+var goal1 = 0;
+var goal2 = 0;
+var goal3 = 0;
 
+var numA2 = 0;
+var numB2 = 0;
+var numC2 = 0;
 
-function setComb(x, y, total) {
-	let numA = PS.random(total);
-	PS.debug("NumA = " + numA);
+var s1Active = false;
+var s2Active = false;
+var s3Active = false;
 
-	PS.color(x, y, PS.COLOR_RED);
+var forward = true;
+var timerID;
+var activeSliderX = 0;
+var activeSliderY = 0;
+
+var dialGoal;
+var dialState = 0;
+
+var clicks = 0;
+
+function setComb(x, y) {
+	PS.seed(clicks);
+	let numA = PS.random(9);
+
+	PS.color(x, y, PS.makeRGB(64, 143, 54));
 	PS.glyph(x, y, numA + 48);
 	PS.glyphColor(x, y, PS.COLOR_BLACK);
 	return numA;
 }
 
-function resetButton() {
-	PS.color(0,0, PS.COLOR_RED);
-	PS.glyph(0, 0, 82);
-	PS.glyphColor(0, 0, PS.COLOR_BLACK);
+function setGoals(goalNum) {
+	switch (goalNum) {
+		case 1 : {
+			goal1 = setComb(1, 9);
+			break;
+		}
+		case 2: {
+			goal2 = setComb(3, 9);
+			break;
+		}
+		case 3: {
+			goal3 = setComb(5, 9);
+			break;
+		}
+	}
+	
 }
 
 function setGame() {
-	goal1 = setComb(1, 2, 9);
-	goal2 = setComb(2, 2, 9);
-	goal3 = setComb(3, 2, 9);
+	PS.gridSize(13, 11);
+	PS.color(PS.ALL, PS.ALL, PS.makeRGB(79, 79, 79));
+	PS.gridColor(PS.makeRGB(27, 54, 82));
+	PS.border( PS.ALL, PS.ALL, 0 );
+	PS.statusColor(PS.COLOR_WHITE);
+
+	makeDialGoal();
+
+	var sliders = 0;
+
+	for (var i = 0; i < 3; i++) {
+		if (i == 0) {
+			sliders++;
+		}
+		else {
+			sliders += 2;
+		}
+
+		PS.color(sliders, 9, PS.COLOR_RED);
+
+		for (var j = 1; j < 8; j++) {
+			PS.color(sliders, j, PS.makeRGB(40, 40, 40));
+		}
+	}
+
+	PS.color(9, 1, PS.makeRGB(0, 122, 184));
+	
+	PS.color(8, 3, PS.makeRGB(64, 143, 54));
+	PS.glyph(8, 3, 94);
+	PS.color(9, 3, PS.makeRGB(64, 143, 54));
+	PS.glyph(9, 3, 94);
+	PS.color(10, 3, PS.makeRGB(64, 143, 54));
+	PS.glyph(10, 3, 94);
+
+	PS.color(8, 4, PS.makeRGB(76, 107, 73));
+	PS.glyph(8, 4, numA2 + 48);
+	PS.color(9, 4, PS.makeRGB(76, 107, 73));
+	PS.glyph(9, 4, numB2 + 48);
+	PS.color(10, 4, PS.makeRGB(76, 107, 73));
+	PS.glyph(10, 4, numC2 + 48);
+
+	PS.color(8, 5, PS.COLOR_RED);
+	PS.glyph(8, 5, 118);
+	PS.color(9, 5, PS.COLOR_RED);
+	PS.glyph(9, 5, 118);
+	PS.color(10, 5, PS.COLOR_RED);
+	PS.glyph(10, 5, 118);
+
+	PS.color(8, 8, PS.COLOR_RED);
+	PS.color(9, 8, PS.COLOR_RED);
+	PS.glyph(9, 8, "🔑");
+	PS.color(10, 8, PS.COLOR_RED);
+
+	PS.glyph(9, 1, 94);
 }
 
-function reset() {
-	but1 = 0;
-	but2 = 0;
-	but3 = 0;
-	PS.init();
+function moveSlider() {
+	if(s1Active || s2Active || s3Active) {
+		if(forward) {
+			if(activeSliderY == 7) {
+				forward = false;
+				activeSliderY--;
+				PS.color(activeSliderX, activeSliderY, PS.COLOR_RED);
+				PS.color(activeSliderX, activeSliderY + 1, PS.makeRGB(40, 40, 40));
+			}
+			else {
+				activeSliderY++;
+				PS.color(activeSliderX, activeSliderY, PS.COLOR_RED);
+				PS.color(activeSliderX, activeSliderY - 1, PS.makeRGB(40, 40, 40));
+			}
+		}
+		else  {
+			if(activeSliderY == 1) {
+				forward = true;
+				activeSliderY++;
+				PS.color(activeSliderX, activeSliderY, PS.COLOR_RED);
+				PS.color(activeSliderX, activeSliderY - 1, PS.makeRGB(40, 40, 40));
+			}
+			else {
+				activeSliderY--;
+				PS.color(activeSliderX, activeSliderY, PS.COLOR_RED);
+				PS.color(activeSliderX, activeSliderY + 1, PS.makeRGB(40, 40, 40));
+			}
+		}
+	}
+	
 }
+
+
+function startSlider1() {
+	s1Active = true;
+	activeSliderX = 1;
+	activeSliderY = 1;
+	PS.color(activeSliderX, activeSliderY, PS.COLOR_RED);
+	//start a timer here that uses moveSlider with a generous time delay
+	
+	timerID = PS.timerStart(45, moveSlider);
+}
+
+function startSlider2() {
+	s2Active = true;
+	activeSliderX = 3;
+	activeSliderY = 1;
+	PS.color(activeSliderX, activeSliderY, PS.COLOR_RED);
+	//start a timer here that uses moveSlider with a generous time delay
+	
+	timerID = PS.timerStart(30, moveSlider);
+}
+
+function startSlider3() {
+	s3Active = true;
+	activeSliderX = 5;
+	activeSliderY = 1;
+	PS.color(activeSliderX, activeSliderY, PS.COLOR_RED);
+	//start a timer here that uses moveSlider with a generous time delay
+	
+	timerID = PS.timerStart(15, moveSlider);
+}
+
+function makeDialGoal() {
+	dialGoal = PS.random(4);
+}
+
+function rotateDial() {
+	dialState++;
+	PS.audioPlay("fx_click");
+
+	if(dialState == dialGoal) {
+		PS.statusText("Click!");
+		PS.audioPlay("fx_coin2");
+	}
+	else {
+		PS.statusText("");
+	}
+
+	switch(dialState % 4) {
+		case 0: {
+			PS.glyph(9, 1, 94);
+			break;
+		}
+		case 1: {
+			PS.glyph(9, 1, 62);
+			break;
+		}
+		case 2: {
+			PS.glyph(9, 1, 118);
+			break;
+		}
+		case 3: {
+			PS.glyph(9, 1, 60);
+			break;
+		}
+	}
+
+	dialState %= 4;
+}
+
 
 PS.init = function( system, options ) {
-	PS.gridSize(5, 4);
-	PS.borderColor(PS.ALL, PS.ALL, PS.COLOR_WHITE);
 	setGame();
-	resetButton();
+	startSlider1();
+
+
 
 	// This is also a good place to display
 	// your game title or a welcome message
@@ -67,24 +239,76 @@ PS.touch = function( x, y, data, options ) {
 	// Uncomment the following code line
 	// to inspect x/y parameters:
 
+	//need case for sliders
+	//arrow
+	//up and down
+	//key button
+
+	clicks++;
+
 	// PS.debug( "PS.touch() @ " + x + ", " + y + "\n" );
-	if(x == 1 && y == 2) {
-		but1++;
-		PS.audioPlay(PS.xylophone(20));
+	if(x == activeSliderX && y == activeSliderY && s1Active) {
+		s1Active = false;
+		PS.timerStop(timerID);
+		PS.color(activeSliderX, activeSliderY, PS.makeRGB(173, 173, 173));
+		setGoals(1);
+		startSlider2();
+		PS.audioPlay("fx_drip2");
 	}
-	else if(x == 2 && y==2) {
-		but2++;
-		PS.audioPlay(PS.xylophone(20));
+	else if(x == activeSliderX && y == activeSliderY && s2Active) {
+		s2Active = false;
+		PS.timerStop(timerID);
+		PS.color(activeSliderX, activeSliderY, PS.makeRGB(173, 173, 173));
+		setGoals(2);
+		startSlider3();
+		PS.audioPlay("fx_drip1");
 	}
-	else if(x==3 && y==2) {
-		but3++;
-		PS.audioPlay(PS.xylophone(20));
+	else if(x == activeSliderX && y == activeSliderY && s3Active) {
+		s3Active = false;
+		PS.timerStop(timerID);
+		PS.color(activeSliderX, activeSliderY, PS.makeRGB(173, 173, 173));
+		setGoals(3);
+		PS.audioPlay("fx_drip2");
 	}
-	else if (x==0 && y==0) {
-		reset();
+	else if(x == 8 && y == 3) {
+		numA2++;
+		PS.glyph(8, 4, numA2 + 48);
+	}
+	else if(x == 9 && y == 3) {
+		numB2++;
+		PS.glyph(9, 4, numB2 + 48);
+	}
+	else if(x == 10 && y == 3) {
+		numC2++;
+		PS.glyph(10, 4, numC2 + 48);
+	}
+	else if(x == 8 && y == 5) {
+		numA2--;
+		PS.glyph(8, 4, numA2 + 48);
+	}
+	else if(x == 9 && y == 5) {
+		numB2--;
+		PS.glyph(9, 4, numB2 + 48);
+	}
+	else if(x == 10 && y == 5) {
+		numC2--;
+		PS.glyph(10, 4, numC2 + 48);
+	}
+	else if(x == 9 && y == 8) {
+		if (goal1 == numA2 && goal2 == numB2 && goal3 == numC2 && dialState == dialGoal) {
+			PS.audioPlay("fx_tada");
+			PS.color(PS.ALL, PS.ALL, PS.COLOR_BLACK);
+
+			PS.color(6, 5, PS.makeRGB(214, 175, 0));
+			PS.statusText("a shiny pebble!");
+			
+			
+		}
 	}
 
+	/*
 	if(but1 == goal1 && but2 == goal2 && but3 == goal3) {
+		//change cords duplicate up and down 
 		PS.glyph(1, 2, 87);
 		PS.glyphColor(1, 2, PS.COLOR_BLACK);
 		PS.glyph(2, 2, 73);
@@ -93,6 +317,7 @@ PS.touch = function( x, y, data, options ) {
 		PS.glyphColor(3, 2, PS.COLOR_BLACK);
 		PS.audioPlay("fx_coin6");
 	}
+	*/
 
 };
 
@@ -213,11 +438,12 @@ NOTE: Currently, only mouse wheel events are reported, and only when the mouse c
 PS.input = function( sensors, options ) {
 	// Uncomment the following code lines to inspect first parameter:
 
-//	 var device = sensors.wheel; // check for scroll wheel
+	 var device = sensors.wheel; // check for scroll wheel
 //
-//	 if ( device ) {
-//	   PS.debug( "PS.input(): " + device + "\n" );
-//	 }
+	 if ( device ) {
+	   PS.debug( "PS.input(): " + device + "\n" );
+	 }
 
+	 rotateDial();
 	// Add code here for when an input event is detected.
 };
